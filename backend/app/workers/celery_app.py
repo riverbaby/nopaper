@@ -21,5 +21,5 @@ celery_app.conf.update(
     task_soft_time_limit=3300,  # 55 minutes soft limit
 )
 
-# Auto-discover tasks
-celery_app.autodiscover_tasks(["app.workers"])
+# Import tasks explicitly
+from app.workers import tasks  # noqa
