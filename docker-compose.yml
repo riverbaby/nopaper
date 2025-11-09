@@ -32,8 +32,8 @@ services:
 
   api:
     build:
-      context: ./backend
-      dockerfile: ../deploy/Dockerfile.backend
+      context: .
+      dockerfile: ./deploy/Dockerfile.backend
     env_file: .env
     depends_on:
       postgres:
@@ -52,8 +52,8 @@ services:
 
   worker:
     build:
-      context: ./backend
-      dockerfile: ../deploy/Dockerfile.backend
+      context: .
+      dockerfile: ./deploy/Dockerfile.backend
     env_file: .env
     depends_on:
       - api
@@ -68,8 +68,8 @@ services:
 
   frontend:
     build:
-      context: ./frontend
-      dockerfile: ../deploy/Dockerfile.frontend
+      context: .
+      dockerfile: ./deploy/Dockerfile.frontend
     depends_on:
       - api
     ports:
