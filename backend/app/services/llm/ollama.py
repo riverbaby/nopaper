@@ -7,15 +7,15 @@ from .base import LLMService, LLMResponse
 
 settings = get_settings()
 
-SUMMARIZE_PROMPT = """你是一名严谨的档案助理。请对给定文本生成结构化摘要：
-- 标题（若无则生成）
-- 3-6 条要点（简洁，可扫描）
-- 关键词（#标签样式，中文优先）
-- 若包含日期/金额/发票号/当事人等信息，请抽取到 JSON 字段
+SUMMARIZE_PROMPT = """You are a meticulous document assistant. Generate a structured summary for the given text:
+- Title (generate one if not present)
+- 3-6 key points (concise and scannable)
+- Keywords (hashtag style)
+- Extract dates, amounts, invoice numbers, parties, and other relevant information into JSON fields
 
-输出为 Markdown，末尾附上一个 JSON 代码块，仅包含抽取字段。
+Output in Markdown format, with a JSON code block at the end containing only the extracted fields.
 
-文本内容：
+Text content:
 {text}
 """
 

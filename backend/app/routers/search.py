@@ -125,14 +125,14 @@ async def chat(
     context = "\n\n".join(context_parts)
 
     # Generate response
-    prompt = f"""基于以下文档内容回答用户的问题。请引用相关的文档编号。
+    prompt = f"""Answer the user's question based on the following document content. Please cite relevant document numbers.
 
-文档内容：
+Document content:
 {context}
 
-用户问题：{request.message}
+User question: {request.message}
 
-请提供详细的回答："""
+Please provide a detailed answer:"""
 
     llm_response = await llm_service.generate(prompt)
 

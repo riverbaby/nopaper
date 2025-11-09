@@ -1,170 +1,172 @@
 # DocNest
 
-一款可本地部署、类 Paperless-NGX 的文档收集 / OCR / 总结 / 语义检索（RAG）系统。
+A locally deployable, Paperless-NGX-like document collection / OCR / summarization / semantic search (RAG) system.
 
-## 功能特点
+[中文文档](README_CN.md)
 
-- **文档接入**：支持上传 PDF、图片（PNG/JPG/TIFF/HEIC），批量导入，自动生成缩略图和预览
-- **智能处理**：OCR 文字识别（PaddleOCR）、AI 摘要（Ollama/LLM）、向量化嵌入（BGE）
-- **检索与组织**：标签、分类、关键字 + 向量混合检索（BM25 + Vector）
-- **RAG 对话**：基于文档内容的智能问答，带引用来源
-- **可视化视图**：网格、列表、详情页面，完整的文档管理界面
-- **离线可用**：所有组件可本地部署，无需云服务
-- **Docker 一键部署**：使用 Docker Compose 快速启动
+## Features
 
-## 技术栈
+- **Document Ingestion**: Upload PDFs and images (PNG/JPG/TIFF/HEIC), batch import, automatic thumbnail and preview generation
+- **Intelligent Processing**: OCR text recognition (PaddleOCR), AI summarization (Ollama/LLM), vector embeddings (BGE)
+- **Search & Organization**: Tags, collections, hybrid search (BM25 + Vector similarity)
+- **RAG Chat**: Intelligent Q&A based on document content with citations
+- **Visual Interface**: Grid view, list view, detail pages - complete document management UI
+- **Offline Capable**: All components can be deployed locally without cloud services
+- **One-Click Deploy**: Quick startup with Docker Compose
 
-### 后端
-- **框架**：FastAPI (Python)
-- **数据库**：PostgreSQL
-- **向量数据库**：Qdrant
-- **消息队列**：Redis + Celery
-- **OCR**：PaddleOCR
-- **LLM**：Ollama (支持 Qwen, LLaMA 等)
-- **嵌入模型**：BGE-M3 (sentence-transformers)
+## Tech Stack
 
-### 前端
-- **框架**：React + Vite
-- **路由**：React Router
-- **状态管理**：TanStack Query
-- **样式**：原生 CSS
+### Backend
+- **Framework**: FastAPI (Python)
+- **Database**: PostgreSQL
+- **Vector Database**: Qdrant
+- **Message Queue**: Redis + Celery
+- **OCR**: PaddleOCR
+- **LLM**: Ollama (supports Qwen, LLaMA, etc.)
+- **Embedding Model**: BGE-M3 (sentence-transformers)
 
-## 快速开始
+### Frontend
+- **Framework**: React + Vite
+- **Routing**: React Router
+- **State Management**: TanStack Query
+- **Styling**: Native CSS
 
-### 前置要求
+## Quick Start
+
+### Prerequisites
 
 - Docker & Docker Compose
-- 至少 8GB RAM
-- 20GB 可用磁盘空间
+- At least 8GB RAM
+- 20GB available disk space
 
-### 安装步骤
+### Installation Steps
 
-1. **克隆仓库**
+1. **Clone the repository**
 
 ```bash
 git clone https://github.com/riverbaby/nopaper.git
 cd nopaper
 ```
 
-2. **配置环境变量**
+2. **Configure environment variables**
 
 ```bash
 cp .env.example .env
-# 编辑 .env 文件，修改必要的配置
+# Edit the .env file to modify necessary configurations
 ```
 
-3. **启动服务**
+3. **Start services**
 
 ```bash
-# 首次启动，会拉取 Ollama 模型（可能需要较长时间）
+# First startup will pull Ollama models (may take a while)
 docker-compose up -d
 
-# 等待所有服务启动
+# Wait for all services to start
 docker-compose ps
 
-# 拉取 Ollama 模型（首次使用）
+# Pull Ollama model (first time use)
 docker-compose exec ollama ollama pull qwen2.5:7b-instruct
 ```
 
-4. **访问应用**
+4. **Access the application**
 
-- 前端界面：http://localhost:3000
-- API 文档：http://localhost:8000/api/docs
-- Qdrant 控制台：http://localhost:6333/dashboard
+- Frontend UI: http://localhost:3000
+- API Documentation: http://localhost:8000/api/docs
+- Qdrant Dashboard: http://localhost:6333/dashboard
 
-## 使用指南
+## User Guide
 
-### 上传文档
+### Upload Documents
 
-1. 访问 http://localhost:3000
-2. 点击 "Upload" 导航链接
-3. 选择 PDF 或图片文件
-4. 点击 "Upload" 上传
+1. Visit http://localhost:3000
+2. Click the "Upload" navigation link
+3. Select PDF or image files
+4. Click "Upload" to submit
 
-文档将自动进入处理流水线：
-- OCR 文字识别
-- AI 摘要生成
-- 向量化嵌入
-- 生成缩略图和预览
+Documents will automatically enter the processing pipeline:
+- OCR text recognition
+- AI summary generation
+- Vector embeddings
+- Thumbnail and preview generation
 
-### 搜索文档
+### Search Documents
 
-1. 点击 "Search" 导航链接
-2. 输入关键词或问题
-3. 系统会使用混合检索（BM25 + 向量相似度）返回结果
+1. Click the "Search" navigation link
+2. Enter keywords or questions
+3. The system will use hybrid search (BM25 + vector similarity) to return results
 
-### RAG 对话
+### RAG Chat
 
-1. 点击 "Chat" 导航链接
-2. 输入问题
-3. AI 会基于文档内容回答，并提供引用来源
+1. Click the "Chat" navigation link
+2. Enter your question
+3. AI will answer based on document content and provide citations
 
-## 项目结构
+## Project Structure
 
 ```
 nopaper/
-├── backend/                 # FastAPI 后端
+├── backend/                 # FastAPI backend
 │   ├── app/
-│   │   ├── models/         # 数据库模型
-│   │   ├── routers/        # API 路由
-│   │   ├── services/       # 业务服务
-│   │   │   ├── ocr/       # OCR 服务
-│   │   │   ├── llm/       # LLM 服务
-│   │   │   ├── embed/     # 嵌入服务
-│   │   │   ├── vector/    # 向量存储
-│   │   │   └── preview/   # 预览生成
-│   │   ├── workers/       # Celery 任务
-│   │   └── main.py        # 主入口
+│   │   ├── models/         # Database models
+│   │   ├── routers/        # API routes
+│   │   ├── services/       # Business services
+│   │   │   ├── ocr/       # OCR services
+│   │   │   ├── llm/       # LLM services
+│   │   │   ├── embed/     # Embedding services
+│   │   │   ├── vector/    # Vector store
+│   │   │   └── preview/   # Preview generation
+│   │   ├── workers/       # Celery tasks
+│   │   └── main.py        # Main entry
 │   └── requirements.txt
-├── frontend/               # React 前端
+├── frontend/               # React frontend
 │   ├── src/
-│   │   ├── pages/         # 页面组件
-│   │   ├── api/           # API 客户端
+│   │   ├── pages/         # Page components
+│   │   ├── api/           # API client
 │   │   └── App.tsx
 │   └── package.json
-├── deploy/                 # 部署配置
+├── deploy/                 # Deployment configs
 │   ├── Dockerfile.backend
 │   ├── Dockerfile.frontend
 │   └── nginx.conf
-├── data/                   # 数据目录（自动创建）
-│   ├── docs/              # 文档文件
-│   ├── thumbs/            # 缩略图
-│   ├── previews/          # 预览图
-│   ├── pg/                # PostgreSQL 数据
-│   └── qdrant/            # Qdrant 数据
+├── data/                   # Data directory (auto-created)
+│   ├── docs/              # Document files
+│   ├── thumbs/            # Thumbnails
+│   ├── previews/          # Preview images
+│   ├── pg/                # PostgreSQL data
+│   └── qdrant/            # Qdrant data
 ├── docker-compose.yml
 └── .env.example
 ```
 
-## 配置说明
+## Configuration
 
-### OCR 配置
+### OCR Configuration
 
-支持多种 OCR 引擎（可在 `.env` 中配置）：
+Supports multiple OCR engines (configurable in `.env`):
 
-- `paddleocr`（默认）：支持中英文，效果均衡
-- `tesseract`：开源，多语言支持
-- `deepseek-ocr`：需要 API key
+- `paddleocr` (default): Supports Chinese and English, balanced performance
+- `tesseract`: Open source, multi-language support
+- `deepseek-ocr`: Requires API key
 
-### LLM 配置
+### LLM Configuration
 
-支持多种 LLM 提供商：
+Supports multiple LLM providers:
 
-- `ollama`（默认）：本地部署，支持 Qwen、LLaMA 等
-- `openai_compatible`：OpenAI API 兼容接口
-- `deepseek`：DeepSeek API
+- `ollama` (default): Local deployment, supports Qwen, LLaMA, etc.
+- `openai_compatible`: OpenAI API compatible interface
+- `deepseek`: DeepSeek API
 
-### 向量数据库
+### Vector Database
 
-支持多种向量数据库：
+Supports multiple vector databases:
 
-- `qdrant`（默认）：轻量、高性能
-- `pgvector`：PostgreSQL 扩展
-- `weaviate`、`milvus`、`chroma`
+- `qdrant` (default): Lightweight, high performance
+- `pgvector`: PostgreSQL extension
+- `weaviate`, `milvus`, `chroma`
 
-## 开发
+## Development
 
-### 后端开发
+### Backend Development
 
 ```bash
 cd backend
@@ -174,7 +176,7 @@ pip install -r requirements.txt
 uvicorn app.main:app --reload
 ```
 
-### 前端开发
+### Frontend Development
 
 ```bash
 cd frontend
@@ -182,62 +184,62 @@ npm install
 npm run dev
 ```
 
-### Worker 开发
+### Worker Development
 
 ```bash
 cd backend
 celery -A app.workers.celery_app worker -l INFO
 ```
 
-## API 文档
+## API Documentation
 
-启动服务后访问：http://localhost:8000/api/docs
+After starting services, visit: http://localhost:8000/api/docs
 
-主要 API 端点：
+Main API endpoints:
 
-- `POST /api/v1/documents/` - 上传文档
-- `GET /api/v1/documents/` - 列出文档
-- `GET /api/v1/documents/{id}` - 获取文档详情
-- `POST /api/v1/search/` - 搜索文档
-- `POST /api/v1/search/chat` - RAG 对话
+- `POST /api/v1/documents/` - Upload documents
+- `GET /api/v1/documents/` - List documents
+- `GET /api/v1/documents/{id}` - Get document details
+- `POST /api/v1/search/` - Search documents
+- `POST /api/v1/search/chat` - RAG chat
 
-## 性能优化
+## Performance Optimization
 
-- Worker 并发：建议设置为 CPU 核心数
-- PDF 渲染：150 DPI 预览，600px 宽度缩略图
-- 分块嵌入：512 token + 64 overlap
-- Qdrant HNSW 参数：m=16, ef_construct=128
+- Worker concurrency: Recommended to set to CPU core count
+- PDF rendering: 150 DPI preview, 600px width thumbnails
+- Chunk embeddings: 512 tokens + 64 overlap
+- Qdrant HNSW parameters: m=16, ef_construct=128
 
-## 故障排除
+## Troubleshooting
 
-### Ollama 模型下载失败
+### Ollama Model Download Failed
 
 ```bash
-# 手动拉取模型
+# Manually pull the model
 docker-compose exec ollama ollama pull qwen2.5:7b-instruct
 ```
 
-### OCR 识别效果不佳
+### Poor OCR Recognition
 
-- 调整 `OCR_LANGS` 配置
-- 尝试不同的 OCR 引擎
-- 提高扫描 DPI（在预处理中）
+- Adjust `OCR_LANGS` configuration
+- Try different OCR engines
+- Increase scan DPI (in preprocessing)
 
-### 向量搜索不准确
+### Inaccurate Vector Search
 
-- 调整混合搜索权重（`weights` 参数）
-- 增加检索数量（`k` 参数）
-- 使用不同的嵌入模型
+- Adjust hybrid search weights (`weights` parameter)
+- Increase retrieval count (`k` parameter)
+- Use different embedding models
 
-## 许可证
+## License
 
 MIT License
 
-## 贡献
+## Contributing
 
-欢迎提交 Issue 和 Pull Request！
+Issues and Pull Requests are welcome!
 
-## 致谢
+## Acknowledgments
 
 - PaddleOCR
 - Ollama
