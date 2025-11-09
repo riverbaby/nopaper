@@ -73,7 +73,7 @@ services:
     depends_on:
       - api
     ports:
-      - "3000:80"
+      - "3001:80"
     volumes:
       - ./data/thumbs:/usr/share/nginx/html/thumbs:ro
       - ./data/previews:/usr/share/nginx/html/previews:ro
