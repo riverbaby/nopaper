@@ -1,0 +1,89 @@
+version: "3.9"
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: docnest
+      POSTGRES_USER: docnest
+      POSTGRES_PASSWORD: docnest
+    volumes:
+      - ./data/pg:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U docnest"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:7-alpine
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  qdrant:
+    image: qdrant/qdrant:latest
+    volumes:
+      - ./data/qdrant:/qdrant/storage
+    ports:
+      - "6333:6333"
+
+  api:
+    build:
+      context: ./backend
+      dockerfile: ../deploy/Dockerfile.backend
+    env_file: .env
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      qdrant:
+        condition: service_started
+    volumes:
+      - ./data/docs:/data/docs
+      - ./data/thumbs:/data/thumbs
+      - ./data/previews:/data/previews
+    ports:
+      - "8000:8000"
+    command: ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000", "--reload"]
+
+  worker:
+    build:
+      context: ./backend
+      dockerfile: ../deploy/Dockerfile.backend
+    env_file: .env
+    depends_on:
+      - api
+      - postgres
+      - redis
+      - qdrant
+    volumes:
+      - ./data/docs:/data/docs
+      - ./data/thumbs:/data/thumbs
+      - ./data/previews:/data/previews
+    command: ["celery", "-A", "app.workers.celery_app", "worker", "-l", "INFO"]
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: ../deploy/Dockerfile.frontend
+    depends_on:
+      - api
+    ports:
+      - "3000:80"
+    volumes:
+      - ./data/thumbs:/usr/share/nginx/html/thumbs:ro
+      - ./data/previews:/usr/share/nginx/html/previews:ro
+
+  ollama:
+    image: ollama/ollama:latest
+    volumes:
+      - ollama-data:/root/.ollama
+    ports:
+      - "11434:11434"
+
+volumes:
+  ollama-data:

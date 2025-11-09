@@ -1,0 +1,28 @@
+pipeline:
+  - step: ocr
+    engine: paddleocr
+    lang: ["ch", "en"]
+    page_parallelism: 2
+
+  - step: summarize
+    llm:
+      provider: ollama
+      model: qwen2.5:7b-instruct
+      max_tokens: 512
+
+  - step: embed
+    embedder:
+      provider: local_service
+      model: BAAI/bge-m3
+      normalize: true
+      chunk:
+        strategy: by_tokens
+        tokens: 512
+        overlap: 64
+
+  - step: thumbnail
+    max_width: 600
+    format: webp
+
+  - step: preview
+    dpi: 150
