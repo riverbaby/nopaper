@@ -20,7 +20,7 @@ qdrant-client==1.7.3
 
 # OCR
 paddleocr==2.7.3
-paddlepaddle==2.6.0
+paddlepaddle==2.6.1
 
 # PDF & Image processing
 PyMuPDF==1.23.21
